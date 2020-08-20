@@ -5,57 +5,37 @@ import Categories from '../components/Categories';
 import Carousel from '../components/Carousel';
 import CarouselItems from '../components/CarouselItem';
 import Footer from '../components/Footer';
+import useInitialState from '../hooks/useInitialState';
 
 import '../assets/styles/App.scss';
 
+const API = 'http://localhost:3000/initalState'
 const App = () => {
-    const [videos, setVideos] = useState([]);
-
-    useEffect(() => {
-        fetch('http://localhost:3000/initalState')
-            .then(response => response.json())
-            .then(data => setVideos(data));
-    }, []);
-
-    console.log(videos);
+    const initialState = useInitialState(API);
     return (
         <div className="App">
             <Header />
             <Search />
-
-            <Categories title="Mi lista">
-                <Carousel>
-                    <CarouselItems />
-
-                    <CarouselItems />
-
-
-                    <CarouselItems />
-
-                    <CarouselItems />
-                </Carousel>
-            </Categories>
-
-
+            {initialState.mylist.length > 0 &&
+                <Categories title="Mi lista">
+                    <Carousel>
+                        <CarouselItems />
+                    </Carousel>
+                </Categories>
+            }
             <Categories title="Tendencias">
                 <Carousel>
-                    <CarouselItems />
-
-                    <CarouselItems />
-
+                    {initialState.trends.map(item =>
+                        <CarouselItems key={item.id} {...item} />
+                    )}
                 </Carousel>
             </Categories>
 
             <Categories title="Originales de Platzi Video">
                 <Carousel>
-                    <CarouselItems />
-
-                    <CarouselItems />
-
-
-                    <CarouselItems />
-
-                    <CarouselItems />
+                    {initialState.originals.map(item =>
+                        <CarouselItems key={item.id} {...item} />
+                    )}
                 </Carousel>
             </Categories>
             <Footer />
